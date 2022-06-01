@@ -46,17 +46,21 @@ public class AppService {
     @Scheduled(fixedRate = 24, timeUnit = TimeUnit.HOURS)
     private void getRates() {
         String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_DATE);
-        this.oldRate = Double.parseDouble(rateClient.getYesterdayRate(yesterday, appId).getRates().get(currency));
-        this.newRate = Double.parseDouble(rateClient.getTodayRate(appId).getRates().get(currency));
-        System.out.println(oldRate);
+        oldRate = Double.parseDouble(
+                rateClient.getYesterdayRate(yesterday, appId)
+                        .getRates()
+                        .get(currency));
+        newRate = Double.parseDouble(
+                rateClient.getTodayRate(appId)
+                        .getRates()
+                        .get(currency));
     }
 
     public String getGif() {
-        int index = random.nextInt(20);
-        var gif = this.oldRate > this.newRate
+        int index = random.nextInt(50);
+        var gif = oldRate > newRate
                 ? gifClient.getGifsBroke(broke, apiKey)
                 : gifClient.getGifsRich(rich, apiKey);
-
         return gif.getData().get(index).getImages().getOriginal().getUrl();
     }
 
