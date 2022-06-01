@@ -24,6 +24,18 @@ public class AppService {
     @Value("${currency.name}")
     private String currency;
 
+    @Value("${app.id}")
+    private String appId;
+
+    @Value("${api.key}")
+    private String apiKey;
+
+    @Value("${q.rich}")
+    private String rich;
+
+    @Value("${q.broke}")
+    private String broke;
+
     @Autowired
     GifClient gifClient;
 
@@ -34,16 +46,16 @@ public class AppService {
     @Scheduled(fixedRate = 24, timeUnit = TimeUnit.HOURS)
     private void getRates() {
         String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_DATE);
-        this.oldRate = Double.parseDouble(rateClient.getYesterdayRate(yesterday).getRates().get(currency));
-        this.newRate = Double.parseDouble(rateClient.getTodayRate().getRates().get(currency));
+        this.oldRate = Double.parseDouble(rateClient.getYesterdayRate(yesterday, appId).getRates().get(currency));
+        this.newRate = Double.parseDouble(rateClient.getTodayRate(appId).getRates().get(currency));
         System.out.println(oldRate);
     }
 
     public String getGif() {
         int index = random.nextInt(20);
         var gif = this.oldRate > this.newRate
-                ? gifClient.getGifsBroke()
-                : gifClient.getGifsRich();
+                ? gifClient.getGifsBroke(broke, apiKey)
+                : gifClient.getGifsRich(rich, apiKey);
 
         return gif.getData().get(index).getImages().getOriginal().getUrl();
     }
