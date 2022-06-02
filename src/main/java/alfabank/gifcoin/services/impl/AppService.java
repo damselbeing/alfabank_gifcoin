@@ -17,34 +17,38 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AppService {
 
-    private Random random = new Random();
     private double oldRate;
     private double newRate;
 
     @Value("${currency.name}")
-    private String currency;
+    private String currency = "EUR";
 
     @Value("${app.id}")
-    private String appId;
+    private String appId = "";
 
     @Value("${api.key}")
-    private String apiKey;
+    private String apiKey = "";
 
     @Value("${q.rich}")
-    private String rich;
+    private String rich = "";
 
     @Value("${q.broke}")
-    private String broke;
+    private String broke = "";
+
+    private final GifClient gifClient;
+    private final RateClient rateClient;
+    private final Random random;
 
     @Autowired
-    GifClient gifClient;
-
-    @Autowired
-    RateClient rateClient;
+    public AppService(GifClient gifClient, RateClient rateClient, Random random) {
+        this.random = random;
+        this.gifClient = gifClient;
+        this.rateClient = rateClient;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRate = 24, timeUnit = TimeUnit.HOURS)
-    private void getRates() {
+    void getRates() {
         String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_DATE);
         oldRate = Double.parseDouble(
                 rateClient.getYesterdayRate(yesterday, appId)
