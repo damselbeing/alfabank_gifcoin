@@ -14,4 +14,8 @@ This app displays a GIF image chosen from https://giphy.com/ with regard to USD-
 
 Java 11, SpringBoot 2, FeignClient, Gradle
 
+**LICENSE**
+
+Licensed under the MIT license.
+
 
